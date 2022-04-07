@@ -2,91 +2,485 @@ package ru.kvait.mpandroidcharttest
 
 import android.content.Context
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import ru.kvait.mpandroidcharttest.databinding.ActivityMainBinding
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var chart: LineChart
-    lateinit var btnStart: Button
-    lateinit var btnStop: Button
-    lateinit var txt: TextView
+    private lateinit var binding: ActivityMainBinding
+
     var number = 1
-    val data = listOf(0, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
-        1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
-        1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -
-        1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1,
-        -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
-        1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -
-        1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1,
-        -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
-        1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -
-        1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
-        1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1
-        , 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1,
-        1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1
-        , 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1
-        , 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -
-        1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1,
-        -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1
-        , -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1
-        , -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1)
+    val data = listOf(
+        0,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1,
+        1,
+        -1
+    )
+    val data2 = listOf(
+        0,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10,
+        10,
+        -10
+    )
     var timer = Timer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        chart = findViewById(R.id.chart)
-        btnStart = findViewById(R.id.start)
-        btnStop = findViewById(R.id.stop)
-        txt = findViewById(R.id.text)
-        btnStop.isEnabled = false
+        binding.stop.isEnabled = false
 
-        updateRawDataChart(data, this, chart, -420f, 420f)
+        updateRawDataChart(data, this, binding.chart)
+        AppController.getInstance().setCurrentChart(binding.chart)
+        var currentData = listOf(0)
+        binding.start.setOnClickListener {
+//            currentData = if (currentData != data) data
+//            else data2
+//            updateRawDataChart(currentData, this@MainActivity, binding.chart)
+//            binding.text.text = number++.toString()
 
-        btnStart.setOnClickListener {
-            btnStop.isEnabled = true
+            binding.stop.isEnabled = true
             Toast.makeText(this@MainActivity, "Start", Toast.LENGTH_SHORT).show()
+
+
             timer.schedule(object : TimerTask(){
                 override fun run() {
-                    updateRawDataChart(data, this@MainActivity, chart, -420f, 420f)
+                    currentData = if (currentData != data) data
+                    else data2
+                    updateRawDataChart(currentData, this@MainActivity, binding.chart)
 
                     runOnUiThread {
-                        txt.text = number++.toString()
+                        binding.text.text = number++.toString()
                     }
                 }
             }, 100, 1500)
-            btnStart.isEnabled = false
+            binding.start.isEnabled = false
         }
 
-        btnStop.setOnClickListener {
+        binding.stop.setOnClickListener {
             Toast.makeText(this@MainActivity, "Stop", Toast.LENGTH_SHORT).show()
             timer.cancel()
             timer = Timer()
             number = 1
-            btnStart.isEnabled = true
-            btnStop.isEnabled = false
+            binding.start.isEnabled = true
+            binding.stop.isEnabled = false
         }
     }
 
     private fun updateRawDataChart(
         data: List<Int>,
         c: Context,
-        chart: LineChart,
-        yMin: Float,
-        yMax: Float
+        chart: MyLineChart2,
+        yMin: Float = -30f,
+        yMax: Float = 30f
     ) {
         chart.let { l ->
             l.renderer = MyLineChartRenderer(l, l.animator, l.viewPortHandler)
@@ -101,9 +495,9 @@ class MainActivity : AppCompatActivity() {
             }
 
             l.apply {
-                setMaxVisibleValueCount((data.size * 1.1f).toInt())
-                setVisibleXRangeMinimum(100f)
-                setVisibleXRangeMaximum((data.size * 1.1f).toFloat())
+//                setMaxVisibleValueCount((data.size * 1.1f).toInt())
+//                setVisibleXRangeMinimum(100f)
+//                setVisibleXRangeMaximum((data.size * 1.1f).toFloat())
                 moveViewToX((data.size * 1.1f).toFloat())
             }
 
@@ -126,7 +520,7 @@ class MainActivity : AppCompatActivity() {
                 val ds = LineDataSet(entries, "test")
                 ds.setDrawCircles(false)
                 ds.setDrawValues(false)
-                ds.color = ContextCompat.getColor(c, R.color.purple_700)
+                ds.color = ContextCompat.getColor(c, R.color.teal_200)
 
                 l.data = LineData(ds)
                 oldHlX?.let { hl ->
@@ -135,10 +529,28 @@ class MainActivity : AppCompatActivity() {
             }
         }
         chart.invalidate()
+        var list = listOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f).toFloatArray()
+        chart.viewPortHandler.contentCenter
+        chart.viewPortHandler.matrixTouch.getValues(list)
+        Log.d("TAG!!!", "list ")
+        Log.d("TAG!!!", "list x 0 = ${list[0]}")
+        Log.d("TAG!!!", "list x 1 = ${list[1]}")
+        Log.d("TAG!!!", "list x 2 = ${list[2]}")
+        Log.d("TAG!!!", "list y 3 = ${list[3]}")
+        Log.d("TAG!!!", "list y 4 = ${list[4]}")
+        Log.d("TAG!!!", "list y 5 = ${list[5]}")
+        Log.d("TAG!!!", "list = ${list[6]}")
+        Log.d("TAG!!!", "list = ${list[7]}")
+        Log.d("TAG!!!", "list = ${list[8]}")
+//        chart.moveViewTo(list[2], list[5] / 2, YAxis.AxisDependency.LEFT)
+//        chart.centerViewToY(0f, YAxis.AxisDependency.LEFT)
+//        chart.centerViewTo(list[2], 0f, YAxis.AxisDependency.LEFT)
+
+
     }
 
     private fun initRawDataChart(
-        chart: LineChart
+        chart: MyLineChart2
     ) {
         chart.description.text = "test"
         chart.legend.isEnabled = true
@@ -168,50 +580,8 @@ class MainActivity : AppCompatActivity() {
 
         })
     }
+
+    fun moveChartViewToY() {
+        binding.chart.centerViewToY(0f, YAxis.AxisDependency.LEFT)
+    }
 }
-
-//            var dataValues: List<Float>? =
-//                data?.values?.map { (it.siAc / hrw?.rankMult!!).toFloat() }
-
-//            var startX: Float? = null
-//            var dx = 0f
-//            if (drawOnPeriodStart && dataValues != null) { //todo: it is spike! use real math
-//                data?.let { data ->
-//                    val df = data.discretizationFrequence
-//                    val dataValuesArr = dataValues!!.map { it.toDouble() }.toDoubleArray()
-//                    val periods1 =
-//                        TRCUtils2.periodStartIndex(dataValuesArr, df.toDouble(), null)
-//                    val ps = periods1.second.map {
-//                        TRCUtils2.Companion.SignalPeriod(it.first, it.second, it.third)
-//                    }
-//                    if (periods1.second.isNotEmpty()) {
-//                        val p1 = periods1.second[0]
-//                        val sp =
-//                            TRCUtils2.Companion.SignalPeriod(p1.first, p1.second, p1.third)
-//                        try {
-//                            val realStart =
-//                                sp.realStart(
-//                                    periods1.first,
-//                                    TRCUtils2.Companion.SignalPeriod.symmetry(
-//                                        ps,
-//                                        periods1.first
-//                                    )
-//                                )
-//                            val sliced =
-//                                periods1.first.slice(
-//                                    IntRange(
-//                                        p1.first,
-//                                        dataValues!!.size - 1
-//                                    )
-//                                )
-//                                    .map { it.toFloat() }.toTypedArray()
-//                            dataValues =
-//                                arrayOf(realStart.second.toFloat(), *sliced).toList()
-//                            startX = realStart.first.toFloat() - p1.first + 1
-//                            dx = 0f - startX!!
-//                        } catch (e: Exception) {
-//                            Log.e(TAG, "realStart error ${e.message}")
-//                        }
-//                    }
-//                }
-//            }

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.github.mikephil.charting.charts.LineChart
+    <ru.kvait.mpandroidcharttest.MyLineChart2
         android:id="@+id/chart"
         android:layout_width="match_parent"
         android:layout_height="300dp"

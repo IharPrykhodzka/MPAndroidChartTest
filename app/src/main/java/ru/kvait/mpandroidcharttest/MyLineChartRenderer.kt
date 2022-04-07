@@ -99,4 +99,12 @@ class MyLineChartRenderer(
             e.printStackTrace()
         }
     }
+
+    override fun drawData(c: Canvas?) {
+        try {
+            super.drawData(c)
+        } catch (e: NullPointerException) {
+            e.printStackTrace()
+        }
+    }
 }
