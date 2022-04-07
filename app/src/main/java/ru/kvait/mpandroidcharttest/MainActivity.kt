@@ -442,14 +442,9 @@ class MainActivity : AppCompatActivity() {
         AppController.getInstance().setCurrentChart(binding.chart)
         var currentData = listOf(0)
         binding.start.setOnClickListener {
-//            currentData = if (currentData != data) data
-//            else data2
-//            updateRawDataChart(currentData, this@MainActivity, binding.chart)
-//            binding.text.text = number++.toString()
 
             binding.stop.isEnabled = true
             Toast.makeText(this@MainActivity, "Start", Toast.LENGTH_SHORT).show()
-
 
             timer.schedule(object : TimerTask(){
                 override fun run() {
@@ -529,24 +524,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
         chart.invalidate()
-        var list = listOf(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f).toFloatArray()
-        chart.viewPortHandler.contentCenter
-        chart.viewPortHandler.matrixTouch.getValues(list)
-        Log.d("TAG!!!", "list ")
-        Log.d("TAG!!!", "list x 0 = ${list[0]}")
-        Log.d("TAG!!!", "list x 1 = ${list[1]}")
-        Log.d("TAG!!!", "list x 2 = ${list[2]}")
-        Log.d("TAG!!!", "list y 3 = ${list[3]}")
-        Log.d("TAG!!!", "list y 4 = ${list[4]}")
-        Log.d("TAG!!!", "list y 5 = ${list[5]}")
-        Log.d("TAG!!!", "list = ${list[6]}")
-        Log.d("TAG!!!", "list = ${list[7]}")
-        Log.d("TAG!!!", "list = ${list[8]}")
-//        chart.moveViewTo(list[2], list[5] / 2, YAxis.AxisDependency.LEFT)
-//        chart.centerViewToY(0f, YAxis.AxisDependency.LEFT)
-//        chart.centerViewTo(list[2], 0f, YAxis.AxisDependency.LEFT)
-
-
     }
 
     private fun initRawDataChart(
@@ -579,9 +556,5 @@ class MainActivity : AppCompatActivity() {
             }
 
         })
-    }
-
-    fun moveChartViewToY() {
-        binding.chart.centerViewToY(0f, YAxis.AxisDependency.LEFT)
     }
 }

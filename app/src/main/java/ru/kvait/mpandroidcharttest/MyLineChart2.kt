@@ -1,7 +1,6 @@
 package ru.kvait.mpandroidcharttest
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
@@ -22,21 +21,11 @@ import com.github.mikephil.charting.utils.MPPointD
 import com.github.mikephil.charting.utils.Transformer
 import com.github.mikephil.charting.utils.Utils
 
-const val SAVE_MATRIX = "matrix"
-
 class MyLineChart2 : LineChart {
-
-    lateinit var sp : SharedPreferences
 
     constructor(context: Context) : super(context)
 
-    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {
-        sp = context?.getSharedPreferences(SAVE_MATRIX, Context.MODE_PRIVATE)!!
-    }
-
-    //computeAxis
-    private var totalTime: Long = 0
-    private var drawCycles: Long = 0
+    constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
 
     private var myCustomViewPortEnabled = false
     private val mOffsetsBuffer = RectF()
@@ -50,11 +39,9 @@ class MyLineChart2 : LineChart {
         mAxisLeft = YAxis(AxisDependency.LEFT)
         mAxisRight = YAxis(AxisDependency.RIGHT)
 
+        /** Change to MyTransformer **/
         myLeftAxisTransformer = MyTransformer(mViewPortHandler)
         myRightAxisTransformer = MyTransformer(mViewPortHandler)
-
-//        mLeftAxisTransformer = myLeftAxisTransformer
-//        mRightAxisTransformer = myRightAxisTransformer
 
         mAxisRendererLeft = YAxisRenderer(mViewPortHandler, mAxisLeft, myLeftAxisTransformer)
         mAxisRendererRight = YAxisRenderer(mViewPortHandler, mAxisRight, myRightAxisTransformer)
@@ -110,41 +97,7 @@ class MyLineChart2 : LineChart {
         return if (which == AxisDependency.LEFT) myLeftAxisTransformer else myRightAxisTransformer
     }
 
-
-
-    override fun calcMinMax() {
-
-        Log.d("TAG!!!", "calcMinMax")
-
-        val mTrans =  getTransformer(YAxis.AxisDependency.LEFT)
-
-
-        val p1: MPPointD = mTrans.getValuesByTouchPoint(
-            mViewPortHandler.contentLeft(),
-            mViewPortHandler.contentTop()
-        )
-        val p2: MPPointD = mTrans.getValuesByTouchPoint(
-            mViewPortHandler.contentLeft(),
-            mViewPortHandler.contentBottom()
-        )
-        Log.d("TAG!!!", "calcMinMax p1 = $p1")
-        Log.d("TAG!!!", "calcMinMax p2 = $p2")
-        Log.d("TAG!!!", "calcMinMax mViewPortHandler.contentLeft() = ${mViewPortHandler.contentLeft()}")
-        Log.d("TAG!!!", "calcMinMax mViewPortHandler.contentTop() = ${mViewPortHandler.contentTop()}")
-        Log.d("TAG!!!", "calcMinMax mViewPortHandler.contentBottom() = ${mViewPortHandler.contentBottom()}")
-
-        mXAxis.calculate(mData.xMin, mData.xMax)
-
-        // calculate axis range (min / max) according to provided data
-        mAxisLeft.calculate(mData.getYMin(YAxis.AxisDependency.LEFT), mData.getYMax(YAxis.AxisDependency.LEFT))
-        mAxisRight.calculate(
-            mData.getYMin(YAxis.AxisDependency.RIGHT),
-            mData.getYMax(YAxis.AxisDependency.RIGHT)
-        )
-    }
-
     override fun calculateOffsets() {
-        Log.d("TAG!!!", "calculateOffsets")
         if (!myCustomViewPortEnabled) {
             var offsetLeft = 0f
             var offsetRight = 0f
@@ -204,24 +157,6 @@ class MyLineChart2 : LineChart {
 
         prepareOffsetMatrix()
         prepareValuePxMatrix()
-        Log.d("TAG!!!", "2 calcMinMax")
-
-        val mTrans =  getTransformer(YAxis.AxisDependency.LEFT)
-
-
-        val p1: MPPointD = mTrans.getValuesByTouchPoint(
-            mViewPortHandler.contentLeft(),
-            mViewPortHandler.contentTop()
-        )
-        val p2: MPPointD = mTrans.getValuesByTouchPoint(
-            mViewPortHandler.contentLeft(),
-            mViewPortHandler.contentBottom()
-        )
-        Log.d("TAG!!!", "2 calcMinMax p1 = $p1")
-        Log.d("TAG!!!", "2 calcMinMax p2 = $p2")
-        Log.d("TAG!!!", "2 calcMinMax mViewPortHandler.contentLeft() = ${mViewPortHandler.contentLeft()}")
-        Log.d("TAG!!!", "2 calcMinMax mViewPortHandler.contentTop() = ${mViewPortHandler.contentTop()}")
-        Log.d("TAG!!!", "2 calcMinMax mViewPortHandler.contentBottom() = ${mViewPortHandler.contentBottom()}")
     }
 
     override fun setViewPortOffsets(left: Float, top: Float, right: Float, bottom: Float) {
@@ -234,40 +169,11 @@ class MyLineChart2 : LineChart {
         myCustomViewPortEnabled = false
     }
 
-    override fun notifyDataSetChanged() {
-        if (mData == null) {
-            if (mLogEnabled) Log.i(LOG_TAG, "Preparing... DATA NOT SET.")
-            return
-        } else {
-            if (mLogEnabled) Log.i(LOG_TAG, "Preparing...")
-        }
-
-        if (mRenderer != null) mRenderer.initBuffers()
-
-        calcMinMax()
-
-        mAxisRendererLeft.computeAxis(
-            mAxisLeft.mAxisMinimum,
-            mAxisLeft.mAxisMaximum,
-            mAxisLeft.isInverted
-        )
-        mAxisRendererRight.computeAxis(
-            mAxisRight.mAxisMinimum,
-            mAxisRight.mAxisMaximum,
-            mAxisRight.isInverted
-        )
-        mXAxisRenderer.computeAxis(mXAxis.mAxisMinimum, mXAxis.mAxisMaximum, false)
-
-        if (mLegend != null) mLegendRenderer.computeLegend(mData)
-        calculateOffsets()
-    }
-
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        Log.d("TAG!!!", "1 AppController.getInstance().setMyMatrix = ${mViewPortHandler.matrixTouch}")
         val isEvent = super.onTouchEvent(event)
 
+        /** Save Matrix after scaling and zooming **/
         if (mTouchEnabled) {
-            Log.d("TAG!!!", "2 AppController.getInstance().setMyMatrix = ${mViewPortHandler.matrixTouch.values()}")
             val m = mViewPortHandler.matrixTouch.values()
             AppController.getInstance().setMyMatrix(m)
         }
