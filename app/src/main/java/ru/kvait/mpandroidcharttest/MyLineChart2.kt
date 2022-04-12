@@ -1,9 +1,11 @@
 package ru.kvait.mpandroidcharttest
 
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
+import android.text.TextUtils
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -17,7 +19,6 @@ import com.github.mikephil.charting.listener.BarLineChartTouchListener
 import com.github.mikephil.charting.renderer.LineChartRenderer
 import com.github.mikephil.charting.renderer.XAxisRenderer
 import com.github.mikephil.charting.renderer.YAxisRenderer
-import com.github.mikephil.charting.utils.MPPointD
 import com.github.mikephil.charting.utils.Transformer
 import com.github.mikephil.charting.utils.Utils
 
@@ -179,5 +180,149 @@ class MyLineChart2 : LineChart {
         }
 
         return isEvent
+    }
+
+    override fun onDraw(canvas: Canvas?) {
+        //TODO В трансформере поставить флаг мол маьрица не совпадает,
+        //TODO переопределить матрицу и прервать отрисовку.
+        //TODO Постораться оставить первичную отрисовку, пропустив последующие.
+        //TODO Должно привисти к меньшему дёрганью и загрузки приложения.
+
+        // super.onDraw(canvas);
+        if (mData == null) {
+            super.onDraw(canvas)
+            return
+        }
+
+        //if (mData == null) return
+
+        val starttime = System.currentTimeMillis()
+
+        // execute all drawing commands
+        drawGridBackground(canvas)
+
+        if (mAutoScaleMinMaxEnabled) {
+            autoScale()
+        }
+
+        if (mAxisLeft.isEnabled) mAxisRendererLeft.computeAxis(
+            mAxisLeft.mAxisMinimum,
+            mAxisLeft.mAxisMaximum,
+            mAxisLeft.isInverted
+        )
+
+        if (AppController.getInstance().isRefreshMatrix()) {
+            Log.e("TAG!!!", "onTouchEvent = return")
+            AppController.getInstance().setIsRefreshMatrix(false)
+            return}
+
+        if (mAxisRight.isEnabled) mAxisRendererRight.computeAxis(
+            mAxisRight.mAxisMinimum,
+            mAxisRight.mAxisMaximum,
+            mAxisRight.isInverted
+        )
+
+        if (AppController.getInstance().isRefreshMatrix()) {
+            Log.e("TAG!!!", "onTouchEvent = return")
+            AppController.getInstance().setIsRefreshMatrix(false)
+            return}
+
+        if (mXAxis.isEnabled) mXAxisRenderer.computeAxis(
+            mXAxis.mAxisMinimum,
+            mXAxis.mAxisMaximum,
+            false
+        )
+
+        if (AppController.getInstance().isRefreshMatrix()) {
+            Log.e("TAG!!!", "onTouchEvent = return")
+            AppController.getInstance().setIsRefreshMatrix(false)
+            return}
+
+        Log.d("TAG!!!", "onTouchEvent = DRAW")
+
+        mXAxisRenderer.renderAxisLine(canvas)
+        mAxisRendererLeft.renderAxisLine(canvas)
+        mAxisRendererRight.renderAxisLine(canvas)
+
+        if (mXAxis.isDrawGridLinesBehindDataEnabled) mXAxisRenderer.renderGridLines(canvas)
+
+        if (mAxisLeft.isDrawGridLinesBehindDataEnabled) mAxisRendererLeft.renderGridLines(canvas)
+
+        if (mAxisRight.isDrawGridLinesBehindDataEnabled) mAxisRendererRight.renderGridLines(canvas)
+
+        if (mXAxis.isEnabled && mXAxis.isDrawLimitLinesBehindDataEnabled) mXAxisRenderer.renderLimitLines(
+            canvas
+        )
+
+        if (mAxisLeft.isEnabled && mAxisLeft.isDrawLimitLinesBehindDataEnabled) mAxisRendererLeft.renderLimitLines(
+            canvas
+        )
+
+        if (mAxisRight.isEnabled && mAxisRight.isDrawLimitLinesBehindDataEnabled) mAxisRendererRight.renderLimitLines(
+            canvas
+        )
+
+        // make sure the data cannot be drawn outside the content-rect
+        var clipRestoreCount = canvas!!.save()
+        canvas!!.clipRect(mViewPortHandler.contentRect)
+
+        mRenderer.drawData(canvas)
+
+        if (!mXAxis.isDrawGridLinesBehindDataEnabled) mXAxisRenderer.renderGridLines(canvas)
+
+        if (!mAxisLeft.isDrawGridLinesBehindDataEnabled) mAxisRendererLeft.renderGridLines(canvas)
+
+        if (!mAxisRight.isDrawGridLinesBehindDataEnabled) mAxisRendererRight.renderGridLines(canvas)
+
+        // if highlighting is enabled
+        if (valuesToHighlight()) mRenderer.drawHighlighted(canvas, mIndicesToHighlight)
+
+
+        // Removes clipping rectangle
+        canvas!!.restoreToCount(clipRestoreCount)
+
+        mRenderer.drawExtras(canvas)
+
+        if (mXAxis.isEnabled && !mXAxis.isDrawLimitLinesBehindDataEnabled) mXAxisRenderer.renderLimitLines(
+            canvas
+        )
+
+        if (mAxisLeft.isEnabled && !mAxisLeft.isDrawLimitLinesBehindDataEnabled) mAxisRendererLeft.renderLimitLines(
+            canvas
+        )
+
+        if (mAxisRight.isEnabled && !mAxisRight.isDrawLimitLinesBehindDataEnabled) mAxisRendererRight.renderLimitLines(
+            canvas
+        )
+
+        mXAxisRenderer.renderAxisLabels(canvas)
+        mAxisRendererLeft.renderAxisLabels(canvas)
+        mAxisRendererRight.renderAxisLabels(canvas)
+
+        if (isClipValuesToContentEnabled) {
+            clipRestoreCount = canvas!!.save()
+            canvas!!.clipRect(mViewPortHandler.contentRect)
+            mRenderer.drawValues(canvas)
+            canvas!!.restoreToCount(clipRestoreCount)
+        } else {
+            mRenderer.drawValues(canvas)
+        }
+
+        mLegendRenderer.renderLegend(canvas)
+
+        drawDescription(canvas)
+
+        drawMarkers(canvas)
+
+//        if (mLogEnabled) {
+//            val drawtime = System.currentTimeMillis() - starttime
+//            totalTime += drawtime
+//            drawCycles += 1
+//            val average = totalTime / drawCycles
+//            Log.i(
+//                LOG_TAG, "Drawtime: " + drawtime + " ms, average: " + average + " ms, cycles: "
+//                        + drawCycles
+//            )
+//        }
     }
 }

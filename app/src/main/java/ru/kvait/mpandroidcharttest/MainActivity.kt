@@ -442,22 +442,26 @@ class MainActivity : AppCompatActivity() {
         AppController.getInstance().setCurrentChart(binding.chart)
         var currentData = listOf(0)
         binding.start.setOnClickListener {
+            currentData = if (currentData != data) data
+            else data2
+            updateRawDataChart(currentData, this@MainActivity, binding.chart)
+            binding.text.text = number++.toString()
 
-            binding.stop.isEnabled = true
-            Toast.makeText(this@MainActivity, "Start", Toast.LENGTH_SHORT).show()
-
-            timer.schedule(object : TimerTask(){
-                override fun run() {
-                    currentData = if (currentData != data) data
-                    else data2
-                    updateRawDataChart(currentData, this@MainActivity, binding.chart)
-
-                    runOnUiThread {
-                        binding.text.text = number++.toString()
-                    }
-                }
-            }, 100, 1500)
-            binding.start.isEnabled = false
+//            binding.stop.isEnabled = true
+//            Toast.makeText(this@MainActivity, "Start", Toast.LENGTH_SHORT).show()
+//
+//            timer.schedule(object : TimerTask(){
+//                override fun run() {
+//                    currentData = if (currentData != data) data
+//                    else data2
+//                    updateRawDataChart(currentData, this@MainActivity, binding.chart)
+//
+//                    runOnUiThread {
+//                        binding.text.text = number++.toString()
+//                    }
+//                }
+//            }, 100, 1500)
+//            binding.start.isEnabled = false
         }
 
         binding.stop.setOnClickListener {
